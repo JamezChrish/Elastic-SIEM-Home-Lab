@@ -1,53 +1,77 @@
-# Elastic SIEM Home Lab  
+# Elastic SIEM Home Lab
 
-This project is a comprehensive guide to setting up and testing a **home lab** for **Elastic SIEM (Security Information and Event Management)** integration using a **Kali Linux Virtual Machine (VM)**. The lab focuses on cybersecurity monitoring, threat simulation, and real-time alerting, providing a hands-on learning experience for security analysts, enthusiasts, and beginners in the field.  
+A hands-on home lab demonstrating end-to-end SIEM operations: forwarding logs from a Kali Linux VM to Elastic Cloud, detecting simulated attacker activity in real time, and building dashboards/alerts in Kibana.
 
-## Project Highlights  
+![Kibana Dashboard](docs/images/dashboard-overview.png)
+*Replace with a screenshot of your main Kibana dashboard*
 
-- **Iterative Development Model**:  
-  The project follows an incremental approach, refining configurations and functionality through multiple iterations.  
+## Summary
 
-- **Functional Features**:  
-  - Log collection and forwarding from Kali Linux VM to Elastic Cloud.  
-  - Real-time event analysis and monitoring using Elastic SIEM tools.  
-  - Customizable dashboards and alerts for actionable insights.  
+This lab simulates a small-scale SOC monitoring pipeline. A Kali Linux VM generates system and network activity, Elastic Agent forwards logs to Elastic Cloud, and Kibana is used to detect and visualize security events — including live Nmap scan detection — in near real-time.
 
-- **Non-Functional Features**:  
-  - **Performance**: Handles real-time log ingestion and analysis.  
-  - **Scalability**: Configured for expansion with additional data sources and workloads.  
-  - **Usability**: Accessible setup for users with varying technical expertise.  
-  - **Security**: Ensures secure log transport and robust configurations.  
+**Stack:** Elastic Agent · Elasticsearch · Kibana · Elastic Cloud · Kali Linux · Nmap · Bash
 
-## Technical Overview  
+## Architecture
 
-- **System Architecture**:  
-  A centralized data collection model using Elastic Agent to forward logs from the Kali Linux VM to Elasticsearch indices stored in Elastic Cloud.  
+```
+Kali Linux VM  --->  Elastic Agent  --->  Elastic Cloud (Elasticsearch)  --->  Kibana
+   (target/                (forwards            (indices +                  (dashboards,
+   log source)           logs securely)          storage)                    detection rules,
+                                                                              alerts)
+```
 
-- **Implementation Details**:  
-  - **Languages and Tools**: Bash scripting, Elastic Agent, Nmap, Kibana, and Elasticsearch.  
-  - **Core Modules**:  
-    - Elastic Agent installation and configuration.  
-    - Nmap-based threat simulation to generate security events.  
-    - Querying logs and creating dynamic dashboards in Kibana.  
+![Architecture Diagram](docs/images/architecture.png)
+*Replace with a simple diagram of the flow above — even a hand-drawn one photographed works*
 
-- **Testing Methodologies**:  
-  - **Unit Testing**: Individual component testing (e.g., log ingestion, encryption).  
-  - **System Testing**: Validation of integrated functions like monitoring, alerting, and dashboards.  
-  - **Bug Fixes**: Addressed configuration mismatches, detection thresholds, and log ingestion delays.  
+## What This Demonstrates
 
-## Key Deliverables  
+- **Log collection & forwarding** — configuring Elastic Agent on a Linux endpoint and securely transporting logs to a cloud-hosted Elasticsearch instance
+- **Detection engineering** — building and tuning detection rules so that Nmap scanning activity is reliably flagged with minimal false positives
+- **Real-time alerting** — Kibana alerts triggered by live events, not just historical queries
+- **Dashboarding** — turning raw log data into an at-a-glance view of security-relevant activity
+- **Troubleshooting** — diagnosing and resolving ingestion delays and configuration mismatches during setup
 
-1. Detailed guide for setting up the Elastic SIEM home lab.  
-2. Configured Elastic SIEM to collect and analyze logs from Kali Linux VM.  
-3. Step-by-step walkthrough for integrating Elastic Agent and generating security events with Nmap.  
-4. User manuals and troubleshooting guides for ease of replication and use.  
+## Walkthrough
 
-## Future Enhancements  
+### 1. Elastic Agent Setup
+Installed and enrolled Elastic Agent on the Kali Linux VM, configured to ship logs to an Elastic Cloud deployment over a secure connection.
 
-- Advanced integrations with additional tools like Snort or Suricata for enhanced threat detection.  
-- Enterprise-level scalability for larger datasets and environments.  
-- Automation of configurations using Docker or other orchestration tools.  
+![Agent Configuration](docs/images/agent-config.png)
+*Replace with a screenshot of the agent enrollment/config screen*
 
-## Conclusion  
+### 2. Generating Security Events
+Used Nmap to run scans against the monitored VM, producing network activity that the SIEM could detect and classify — a lightweight stand-in for real reconnaissance behavior.
 
-This project demonstrates a practical and accessible approach to leveraging Elastic SIEM for cybersecurity monitoring and threat analysis. It is designed to bridge the gap between theoretical knowledge and hands-on implementation, empowering users to explore the capabilities of SIEM tools in a controlled environment.  
+![Nmap Scan](docs/images/nmap-scan.png)
+*Replace with a screenshot of the scan and the corresponding detected event*
+
+### 3. Detection & Alerting
+Built detection rules in Kibana and tuned thresholds to reduce false positives while still catching scan activity in real time.
+
+![Alert Fired](docs/images/alert-triggered.png)
+*Replace with a screenshot of the alert firing in Kibana*
+
+### 4. Dashboards
+Created dashboards to visualize event volume, source/destination activity, and alert history for quick situational awareness.
+
+## Challenges & Fixes
+
+| Issue | Resolution |
+|---|---|
+| Log ingestion delays | Adjusted agent polling/output configuration to reduce lag between event and indexing |
+| Noisy detection thresholds | Tuned rule conditions to cut false positives while keeping true positives |
+| Secure transport misconfiguration | Corrected TLS/output settings between Elastic Agent and Elastic Cloud |
+
+## Future Enhancements
+
+- [ ] Integrate Suricata or Snort for network-layer (IDS/IPS) detection
+- [ ] Containerize the lab setup with Docker for faster, repeatable deployment
+- [ ] Expand to multiple endpoints/data sources for a more realistic enterprise scenario
+
+## Docs
+
+Full write-up, proposal, and progress reports are available in [`/docs`](./docs) for anyone who wants the detailed history of the project.
+
+---
+
+*Built as a self-directed learning project to bridge coursework in networking/security with practical SIEM operations.*
